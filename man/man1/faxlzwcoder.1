@@ -1,0 +1,41 @@
+.TH "faxlzwcoder" 1 0.2 "20 Oct 2023" "User Manual"
+
+.SH NAME
+faxlzwcoder
+
+.SH DESCRIPTION
+LZW BW En-/Decoder.
+
+.SH SYNOPSIS
+faxlzwcoder [options] [infile] [outfile]
+
+.SH OPTIONS
+.TP
+-d
+Decode, else : Encode
+.TP
+-early{E}
+Enlarge the code length {E} entries early (default: 1)
+.TP
+-pbm{W}
+Read/Write pbm-file; using image width {W} (for decoding)
+.TP
+-h
+Show this help
+
+If outfile or both infile and outfile are not given
+standard output and maybe standard input are used.
+
+.SH EXAMPLE
+ faxlzwcoder page.pbm page.lzw
+ faxlzwcoder -d page.lzw page.pbm
+
+.SH COPYRIGHT
+GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+
+.SH SEE ALSO
+ faxg4coder(1)
+
+.SH CONTACTS
+Website:
+ https://github.com/ImageProcessing-ElectronicPublications/faxcoder
