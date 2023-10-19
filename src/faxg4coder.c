@@ -221,10 +221,10 @@ int main(int argc,char **argv)
                 }
                 return 2;
             }
-            if (mmr_header.flags & 0x2) { // zero means min_is_white like in pbm files, so conversion needed only if flag is set
+            if (mmr_header.flags & 0x1) { // zero means min_is_white like in pbm files, so conversion needed only if flag is set
                 invert_colors = true;
             }
-            if (mmr_header.flags & 0x1) {
+            if (mmr_header.flags & 0x2) {
                 fprintf(stderr,"Error: stripped data format for G4/MMR is unsupported\n");
                 if (files[0])
                 {
