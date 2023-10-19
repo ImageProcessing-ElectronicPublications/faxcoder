@@ -156,7 +156,7 @@ int main(int argc,char **argv)
     {
         if (files[0])
         {
-            if ((f=fopen(files[0],"r"))==NULL)
+            if ((f=fopen(files[0],"rb"))==NULL)
             {
                 fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
                 return 2;
@@ -195,7 +195,7 @@ int main(int argc,char **argv)
             }
             if (files[1])
             {
-                if ((g=fopen(files[1],"w"))==NULL)
+                if ((g=fopen(files[1],"wb"))==NULL)
                 {
                     fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
                     if (files[0])
@@ -333,7 +333,7 @@ int main(int argc,char **argv)
             }
             if (files[0])
             {
-                if ((f=fopen(files[0],"r"))==NULL)
+                if ((f=fopen(files[0],"rb"))==NULL)
                 {
                     fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
                     free(buf);
@@ -347,7 +347,7 @@ int main(int argc,char **argv)
         }
         if (files[1])
         {
-            if ((g=fopen(files[1],"w"))==NULL)
+            if ((g=fopen(files[1],"wb"))==NULL)
             {
                 fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
                 free(buf);

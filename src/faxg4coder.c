@@ -187,31 +187,75 @@ int main(int argc,char **argv)
 
     if (decode != false)   // decode
     {
-        const int bwidth=(width+7)/8;
+        bool invert_colors = false;
+        int bwidth, processed_height = 0;
 
-        if(need_mmr_header) {
-            fprintf(stderr,"Error: reading images with MMR header is unimplemented\n");
-            return 2;
-        }
-        iA=100; // initial alloc
-        buf=malloc(iA*bwidth);
-        if (!buf)
-        {
-            fprintf(stderr,"Malloc failed: %m\n");
-            return 2;
-        }
         if (files[0])
         {
-            if ((f=fopen(files[0],"r"))==NULL)
+            if ((f=fopen(files[0],"rb"))==NULL)
             {
                 fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
-                free(buf);
                 return 3;
             }
         }
         else
         {
             f=stdin;
+        }
+
+        if(need_mmr_header) {
+            mmr_header_t mmr_header;
+
+            if (fread(&mmr_header, sizeof(mmr_header_t), 1, f) != 1)
+            {
+                fprintf(stderr,"Error: Can't read MMR header\n");
+                return 2;
+            }
+
+            if (mmr_header.sign[0] != 'M' || mmr_header.sign[1] != 'M' || mmr_header.sign[2] != 'R' || (mmr_header.flags & 0xfc) != 0)
+            {
+                fprintf(stderr,"Error: corrupted MMR header\n");
+                if (files[0])
+                {
+                    fclose(f);
+                }
+                return 2;
+            }
+            if (mmr_header.flags & 0x2) { // zero means min_is_white like in pbm files, so conversion needed only if flag is set
+                invert_colors = true;
+            }
+            if (mmr_header.flags & 0x1) {
+                fprintf(stderr,"Error: stripped data format for G4/MMR is unsupported\n");
+                if (files[0])
+                {
+                    fclose(f);
+                }
+                return 2;
+            }
+            width = mmr_header.width_be[0]*256+mmr_header.width_be[1];
+            height = mmr_header.height_be[0]*256+mmr_header.height_be[1];
+        }
+
+        bwidth=(width+7)/8;
+
+        if (height == 0)
+        {
+            iA=100; // initial alloc
+        }
+        else
+        {
+            iA = height; // initial alloc
+        }
+
+        buf=malloc(iA*bwidth);
+        if (!buf)
+        {
+            fprintf(stderr,"Malloc failed: %m\n");
+            if (files[0])
+            {
+                fclose(f);
+            }
+            return 2;
         }
         gst=init_g4_read(k,width,(bits)?rdfunc_bits:rdfunc,f);
         if (!gst)
@@ -226,7 +270,7 @@ int main(int argc,char **argv)
         }
         while (1)
         {
-            if (height>=iA)
+            if (processed_height>=iA)
             {
                 iA+=iA;
                 tmp=realloc(buf,iA*bwidth);
@@ -242,7 +286,7 @@ int main(int argc,char **argv)
             }
             if (!ret)
             {
-                ret=decode_g4(gst,buf+height*bwidth);
+                ret=decode_g4(gst,buf+processed_height*bwidth);
                 if (ret==1)   // done
                 {
                     break;
@@ -260,7 +304,7 @@ int main(int argc,char **argv)
                 {
                     fclose(f);
                 }
-                ret=write_pbm(files[1],buf,width,height,plain);
+                ret=write_pbm(files[1],buf,width,processed_height,plain);
                 if (ret)
                 {
                     fprintf(stderr,"PBM writer error: %d\n",ret);
@@ -268,12 +312,34 @@ int main(int argc,char **argv)
                 free(buf);
                 return 2;
             }
-            height++;
+            processed_height++;
         }
         free_g4(gst);
         if (files[0])
         {
             fclose(f);
+        }
+        if (invert_colors != false)
+        {
+            int x, y;
+            unsigned char *p;
+
+            p = buf;
+            for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+                    unsigned char b;
+
+                    b = *p;
+                    b = b?0:255;
+                    *p = b;
+
+                    p++;
+                }
+            }
+        }
+        if (height == 0)
+        {
+            height = processed_height;
         }
         ret=write_pbm(files[1],buf,width,height,plain);
         free(buf);
@@ -293,7 +359,7 @@ int main(int argc,char **argv)
         }
         if (files[1])
         {
-            if ((f=fopen(files[1],"w"))==NULL)
+            if ((f=fopen(files[1],"wb"))==NULL)
             {
                 fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
                 free(buf);
