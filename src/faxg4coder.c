@@ -5,9 +5,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <assert.h>
 #include "pbm.h"
 #include "g4code.h"
+
+typedef struct {
+    uint8_t sign[3];
+    uint8_t flags;
+    uint8_t width_be[2];
+    uint8_t height_be[2];
+} mmr_header_t;
 
 void usage(const char *name)
 {
@@ -19,6 +28,8 @@ void usage(const char *name)
            "     -g3: G3 1-dimensional code (default)\n"
            "    -g3K: G3 2-dimensional code, parameter K, e.g. -g32 for K=2\n"
            "     -g4: G4 (2-dim) code\n\n"
+
+           "    -hdr: Put/Read MMR header to file\n\n"
 
            "-decodeW: Decode to pbm-file, using image width W,\n"
            "          e.g. -decode1728 (default, if not given)\n"
@@ -108,7 +119,8 @@ int rdfunc_bits(void *user,unsigned char *buf,int len)
 int main(int argc,char **argv)
 {
     G4STATE *gst;
-    int ret=0,k=0,decode=-1,width,height,plain=0,bits=0;
+    int ret=0,k=0,width = 0,height = 0,plain=0,bits=0;
+    bool need_mmr_header = false, decode = false;
     char *files[2]= {NULL,NULL};
     unsigned char *buf=NULL,*tmp;
     int iA,iB;
@@ -133,16 +145,21 @@ int main(int argc,char **argv)
         {
             k=-1;
         }
+        else if (strcmp(argv[iA],"-hdr")== 0)
+        {
+            need_mmr_header = true;
+        }
         else if (strncmp(argv[iA],"-decode",7)==0)
         {
             if (argv[iA][7])
             {
-                decode=atoi(argv[iA]+7);
+                width=atoi(argv[iA]+7);
             }
             else
             {
-                decode=0;
+                width=0;
             }
+            decode = true;
         }
         else if ( (strcmp(argv[iA],"-h")==0)||(strcmp(argv[iA],"--help")==0) )
         {
@@ -168,10 +185,14 @@ int main(int argc,char **argv)
         }
     }
 
-    if (decode>=0)   // decode
+    if (decode != false)   // decode
     {
-        const int bwidth=(decode+7)/8;
-        width=decode;
+        const int bwidth=(width+7)/8;
+
+        if(need_mmr_header) {
+            fprintf(stderr,"Error: reading images with MMR header is unimplemented\n");
+            return 2;
+        }
         iA=100; // initial alloc
         buf=malloc(iA*bwidth);
         if (!buf)
@@ -192,7 +213,7 @@ int main(int argc,char **argv)
         {
             f=stdin;
         }
-        gst=init_g4_read(k,decode,(bits)?rdfunc_bits:rdfunc,f);
+        gst=init_g4_read(k,width,(bits)?rdfunc_bits:rdfunc,f);
         if (!gst)
         {
             fprintf(stderr,"Alloc error: %m\n");
@@ -203,7 +224,6 @@ int main(int argc,char **argv)
             free(buf);
             return 2;
         }
-        height=0;
         while (1)
         {
             if (height>=iA)
@@ -283,6 +303,40 @@ int main(int argc,char **argv)
         else
         {
             f=stdout;
+        }
+        if(need_mmr_header) {
+            mmr_header_t mmr_header;
+
+            if (width > UINT16_MAX || height > UINT16_MAX)
+            {
+                fprintf(stderr,"Error: image size is too large for MMR header\n");
+                free(buf);
+                if (files[1])
+                {
+                    fclose(f);
+                }
+                return 2;
+            }
+
+            mmr_header.sign[0] = 'M';
+            mmr_header.sign[1] = 'M';
+            mmr_header.sign[2] = 'R';
+            mmr_header.flags = 0x00;
+            mmr_header.width_be[0] = width/256;
+            mmr_header.width_be[1] = width%256;
+            mmr_header.height_be[0] = height/256;
+            mmr_header.height_be[1] = height%256;
+
+            if (fwrite(&mmr_header, sizeof(mmr_header_t), 1, f) != 1)
+            {
+                fprintf(stderr,"Error: can't write MMR header\n");
+                free(buf);
+                if (files[1])
+                {
+                    fclose(f);
+                }
+                return 2;
+            }
         }
         gst=init_g4_write(k,width,(bits)?wrfunc_bits:wrfunc,f);
         if (!gst)
