@@ -158,7 +158,7 @@ int main(int argc,char **argv)
         {
             if ((f=fopen(files[0],"rb"))==NULL)
             {
-                fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
+                fprintf(stderr,"Error opening \"%s\" for reading: %s\n",files[0], strerror(errno));
                 return 2;
             }
         }
@@ -173,7 +173,7 @@ int main(int argc,char **argv)
             buf=malloc(iA*width);
             if (!buf)
             {
-                fprintf(stderr,"Malloc failed: %m\n");
+                fprintf(stderr,"Malloc failed: %s\n", strerror(errno));
                 if (files[0])
                 {
                     fclose(f);
@@ -186,7 +186,7 @@ int main(int argc,char **argv)
             buf=malloc(BUFSIZE);
             if (!buf)
             {
-                fprintf(stderr,"Malloc failed: %m\n");
+                fprintf(stderr,"Malloc failed: %s\n", strerror(errno));
                 if (files[0])
                 {
                     fclose(f);
@@ -197,7 +197,7 @@ int main(int argc,char **argv)
             {
                 if ((g=fopen(files[1],"wb"))==NULL)
                 {
-                    fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
+                    fprintf(stderr,"Error opening \"%s\" for writing: %s\n",files[1], strerror(errno));
                     if (files[0])
                     {
                         fclose(f);
@@ -213,7 +213,7 @@ int main(int argc,char **argv)
         lzw=init_lzw_read(early,rdfunc,f);
         if (!lzw)
         {
-            fprintf(stderr,"Alloc error: %m\n");
+            fprintf(stderr,"Alloc error: %s\n", strerror(errno));
             free(buf);
             if (files[0])
             {
@@ -237,7 +237,7 @@ int main(int argc,char **argv)
                     tmp=realloc(buf,iA*width);
                     if (!tmp)
                     {
-                        fprintf(stderr,"Realloc error: %m\n");
+                        fprintf(stderr,"Realloc error: %s\n", strerror(errno));
                         ret=-1;
                         break;
                     }
@@ -274,7 +274,7 @@ int main(int argc,char **argv)
                     ret=fwrite(buf,1,len,g);
                     if (ret!=len)
                     {
-                        fprintf(stderr,"Write error: %m\n");
+                        fprintf(stderr,"Write error: %s\n", strerror(errno));
                     }
                     break;
                 }
@@ -286,7 +286,7 @@ int main(int argc,char **argv)
                 ret=fwrite(buf,1,BUFSIZE,g);
                 if (ret!=BUFSIZE)
                 {
-                    fprintf(stderr,"Write error: %m\n");
+                    fprintf(stderr,"Write error: %s\n", strerror(errno));
                     break;
                 }
             }
@@ -328,14 +328,14 @@ int main(int argc,char **argv)
             buf=malloc(BUFSIZE);
             if (!buf)
             {
-                fprintf(stderr,"Malloc failed: %m\n");
+                fprintf(stderr,"Malloc failed: %s\n", strerror(errno));
                 return 2;
             }
             if (files[0])
             {
                 if ((f=fopen(files[0],"rb"))==NULL)
                 {
-                    fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
+                    fprintf(stderr,"Error opening \"%s\" for reading: %s\n",files[0], strerror(errno));
                     free(buf);
                     return 2;
                 }
@@ -349,7 +349,7 @@ int main(int argc,char **argv)
         {
             if ((g=fopen(files[1],"wb"))==NULL)
             {
-                fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
+                fprintf(stderr,"Error opening \"%s\" for writing: %s\n",files[1], strerror(errno));
                 free(buf);
                 if ( (!pbm)&&(files[0]) )
                 {
@@ -366,7 +366,7 @@ int main(int argc,char **argv)
         lzw=init_lzw_write(early,wrfunc,g);
         if (!lzw)
         {
-            fprintf(stderr,"Alloc error: %m\n");
+            fprintf(stderr,"Alloc error: %s\n", strerror(errno));
             free(buf);
             if ( (!pbm)&&(files[0]) )
             {

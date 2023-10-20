@@ -194,7 +194,7 @@ int main(int argc,char **argv)
         {
             if ((f=fopen(files[0],"rb"))==NULL)
             {
-                fprintf(stderr,"Error opening \"%s\" for reading: %m\n",files[0]);
+                fprintf(stderr,"Error opening \"%s\" for reading: %s\n",files[0], strerror(errno));
                 return 3;
             }
         }
@@ -250,7 +250,7 @@ int main(int argc,char **argv)
         buf=malloc(iA*bwidth);
         if (!buf)
         {
-            fprintf(stderr,"Malloc failed: %m\n");
+            fprintf(stderr,"Malloc failed: %s\n", strerror(errno));
             if (files[0])
             {
                 fclose(f);
@@ -260,7 +260,7 @@ int main(int argc,char **argv)
         gst=init_g4_read(k,width,(bits)?rdfunc_bits:rdfunc,f);
         if (!gst)
         {
-            fprintf(stderr,"Alloc error: %m\n");
+            fprintf(stderr,"Alloc error: %s\n", strerror(errno));
             if (files[0])
             {
                 fclose(f);
@@ -276,7 +276,7 @@ int main(int argc,char **argv)
                 tmp=realloc(buf,iA*bwidth);
                 if (!tmp)
                 {
-                    fprintf(stderr,"Realloc error: %m\n");
+                    fprintf(stderr,"Realloc error: %s\n", strerror(errno));
                     ret=-1;
                 }
                 else
@@ -361,7 +361,7 @@ int main(int argc,char **argv)
         {
             if ((f=fopen(files[1],"wb"))==NULL)
             {
-                fprintf(stderr,"Error opening \"%s\" for writing: %m\n",files[1]);
+                fprintf(stderr,"Error opening \"%s\" for writing: %s\n",files[1], strerror(errno));
                 free(buf);
                 return 3;
             }
@@ -407,7 +407,7 @@ int main(int argc,char **argv)
         gst=init_g4_write(k,width,(bits)?wrfunc_bits:wrfunc,f);
         if (!gst)
         {
-            fprintf(stderr,"Alloc error: %m\n");
+            fprintf(stderr,"Alloc error: %s\n", strerror(errno));
             free(buf);
             if (files[1])
             {
