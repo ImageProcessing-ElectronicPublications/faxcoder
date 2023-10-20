@@ -23,7 +23,7 @@ void usage(const char *name)
     printf("G3 and G4 En-/Decoder\n"
            "(c) 2006,2007 by Tobias Hoffmann\n\n"
 
-           "Usage: %s [-g3|-g3K|-g4] [-decodeW] [-h -p -b] [infile] [outfile]\n\n"
+           "Usage: %s [-g3|-g3K|-g4] [-decodeW] [-hdr] [-h -p -b] [infile] [outfile]\n\n"
 
            "     -g3: G3 1-dimensional code (default)\n"
            "    -g3K: G3 2-dimensional code, parameter K, e.g. -g32 for K=2\n"
