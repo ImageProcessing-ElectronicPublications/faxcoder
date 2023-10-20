@@ -1,0 +1,35 @@
+
+# Visual studio
+*.user
+*.obj
+*.log
+*.pdb
+*.tlog
+*.lastbuildstate
+*.exe
+*.dll
+*.dll.recipe
+*.lib
+*.exp
+*.iobj
+*.ipdb
+*.ipch
+*.suo
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.ilk
+*.idb
+*.exe.recipe
+*.FileListAbsolute.txt
+
+# OpenWatcom
+*.lk1
+*.map
+*.mk
+*.mk1
+*.sym
+
+# Unices
+*.o
