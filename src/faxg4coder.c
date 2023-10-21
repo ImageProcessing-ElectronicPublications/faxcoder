@@ -9,6 +9,10 @@
 #include <stdint.h>
 #include <assert.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <io.h>
+#endif
+#include <fcntl.h>
 #include "pbm.h"
 #include "g4code.h"
 
@@ -202,6 +206,9 @@ int main(int argc,char **argv)
         else
         {
             f=stdin;
+#ifdef _WIN32
+            _setmode(_fileno(f), _O_BINARY);
+#endif
         }
 
         if(need_mmr_header) {
@@ -370,6 +377,9 @@ int main(int argc,char **argv)
         else
         {
             f=stdout;
+#ifdef _WIN32
+            _setmode(_fileno(f), _O_BINARY);
+#endif
         }
         if(need_mmr_header) {
             mmr_header_t mmr_header;

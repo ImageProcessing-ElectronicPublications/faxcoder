@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <io.h>
+#endif
+#include <fcntl.h>
 #include "pbm.h"
 #include "lzwcode.h"
 
@@ -166,6 +170,9 @@ int main(int argc,char **argv)
         else
         {
             f=stdin;
+#ifdef _WIN32
+            _setmode(_fileno(f), _O_BINARY);
+#endif
         }
         if (pbm)
         {
@@ -209,6 +216,9 @@ int main(int argc,char **argv)
             else
             {
                 g=stdout;
+#ifdef _WIN32
+                _setmode(_fileno(g), _O_BINARY);
+#endif
             }
         }
         lzw=init_lzw_read(early,rdfunc,f);
@@ -344,6 +354,9 @@ int main(int argc,char **argv)
             else
             {
                 f=stdin;
+#ifdef _WIN32
+                _setmode(_fileno(f), _O_BINARY);
+#endif
             }
         }
         if (files[1])
@@ -362,6 +375,9 @@ int main(int argc,char **argv)
         else
         {
             g=stdout;
+#ifdef _WIN32
+            _setmode(_fileno(g), _O_BINARY);
+#endif
         }
 //    lzw=init_lzw_write(1,wrfunc_mem,&tmp);
         lzw=init_lzw_write(early,wrfunc,g);
