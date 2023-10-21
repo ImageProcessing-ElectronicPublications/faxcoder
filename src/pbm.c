@@ -13,7 +13,7 @@ int read_pbm(const char *filename,unsigned char **buf,int *width,int *height)
     assert( (buf)&&(width)&&(height) );
     if (filename)
     {
-        if ((f=fopen(filename,"r"))==NULL)
+        if ((f=fopen(filename,"rb"))==NULL)
         {
             return -1;
         }
@@ -168,7 +168,7 @@ int write_pbm(const char *filename,unsigned char *buf,int width,int height,int p
 
     if (filename)
     {
-        if ((f=fopen(filename,"w"))==NULL)
+        if ((f=fopen(filename,"wb"))==NULL)
         {
             return -1;
         }
