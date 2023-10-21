@@ -19,17 +19,16 @@ void usage(const char *name)
     printf("LZW En-/Decoder\n"
            "(c) 2007 by Tobias Hoffmann\n\n"
 
-           "Usage: %s [-d] [-pbmW] [-h] [-earlyE] [infile] [outfile]\n\n"
+           "Usage: %s [options] [infile] [outfile]\n\n"
 
-           "      -d: Decode\n"
-           "   else : Encode\n\n"
+           "options:\n"
+           "       -d: Decode, else Encode\n\n"
 
-           " -earlyE: Enlarge the code length E entries early (default: 1)\n\n"
+           "-early{E}: Enlarge the code length {E} entries early (default: 1)\n\n"
 
-           "   -pbmW: Read/Write pbm-file; using image width W (for decoding)\n\n"
+           "  -pbm{W}: Read/Write pbm-file; using image width {W} (for decoding)\n\n"
 
-           "      -h: Show this help\n\n"
-//         "      -x: Read/Write hexstrings\n\n"
+           "       -h: Show this help\n\n"
 
            "If outfile or both infile and outfile are not given\n"
            "standard output and maybe standard input are used.\n\n"
