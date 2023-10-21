@@ -24,21 +24,26 @@ void usage(const char *name)
     printf("G3 and G4 En-/Decoder\n"
            "(c) 2006,2007 by Tobias Hoffmann\n\n"
 
-           "Usage: %s [-g3|-g3K|-g4] [-decodeW] [-hdr] [-h -p -b] [infile] [outfile]\n\n"
+           "Usage: %s [options] [infile] [outfile]\n\n"
 
-           "     -g3: G3 1-dimensional code (default)\n"
-           "    -g3K: G3 2-dimensional code, parameter K, e.g. -g32 for K=2\n"
-           "     -g4: G4 (2-dim) code\n\n"
+           "options:\n"
+           " algorithm:\n"
+           "       -g3: G3 1-dimensional code (default)\n"
+           "    -g3{K}: G3 2-dimensional code, parameter {K}, e.g. -g32 for K=2\n"
+           "       -g4: G4 (2-dim) code\n\n"
 
-           "    -hdr: Put/Read MMR header to file\n\n"
+           " mmr:\n"
+           "      -hdr: Put/Read MMR header to file\n\n"
 
-           "-decodeW: Decode to pbm-file, using image width W,\n"
-           "          e.g. -decode1728 (default, if not given)\n"
-           "  else  : Encode from pbm-file\n\n"
+           " direct:\n"
+           "-decode{W}: Decode to pbm-file, using image width {W},\n"
+           "            e.g. -decode1728 (default, if not given)\n"
+           "     else : Encode from pbm-file\n\n"
 
-           "      -h: Show this help\n"
-           "      -p: Write plain pbm\n"
-           "      -b: Read/Write bitstrings\n\n"
+           " other:\n"
+           "        -b: Read/Write bitstrings\n"
+           "        -p: Write plain pbm\n"
+           "        -h: Show this help\n\n"
 
            "Only K=2 (low resolution) and K=4 (high resolution) are standardized.\n"
            "If outfile or both infile and outfile are not given\n"
